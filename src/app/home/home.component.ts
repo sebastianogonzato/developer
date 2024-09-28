@@ -1,22 +1,69 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, AfterViewInit  } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, AfterViewInit, VERSION, ViewEncapsulation  } from '@angular/core';
 import { MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { Observable } from 'rxjs';
-import { of, map } from 'rxjs';
+//nuova galleria
+import lgZoom from 'lightgallery/plugins/zoom';
+import lgVideo from 'lightgallery/plugins/video';
+import { BeforeSlideDetail, InitDetail } from 'lightgallery/lg-events';
+import { LightGallery } from 'lightgallery/lightgallery';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class HomeComponent implements AfterViewInit {
+  name = "Angular " + VERSION.major;
   risultatoCat: any;
+
+   private lightGallery!: LightGallery;
+   private needRefresh = false;
+ 
+  
+  ngAfterViewChecked(): void { // freccette di scorrimento
+      if (this.needRefresh) {
+          this.lightGallery.refresh();
+          this.needRefresh = false;
+      }
+  }
+  
+  settings = {
+    counter: true,
+   // plugins: [lgZoom]
+    plugins: [lgVideo]
+  };
+
+
+
+  onBeforeSlide = (detail: BeforeSlideDetail): void => {  // metti se statico senza scorrimento
+    const { index, prevIndex } = detail;
+    console.log(index, prevIndex);
+  };
+
+
  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  listaRes: any[] = [
-    { id: 1, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0004.jpg'},
-    { id: 2, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0005.jpg'},
+  listaRes = [
+    
+    // {  id: 1,  size: '1400-933', categoria: 'giardinaggio', 
+    //   src:
+    //   './assets/fotogiardinaggio/imggiard0004.jpg',
+    // thumb:
+    //   './assets/fotogiardinaggio/imggiard0004.jpg', 
+    // },
+    // {  id: 2,  size: '1400-933',  categoria: 'giardinaggio', 
+    //   src:
+    //   './assets/fotogiardinaggio/imggiard0005.jpg',  
+    // thumb:
+    //   './assets/fotogiardinaggio/imggiard0005.jpg'
+    // },
+
+     { id: 1, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0004.jpg'}, // metti queste se statico con before
+     { id: 2, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0005.jpg'},
     { id: 3, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0009.jpg'},
     { id: 4, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0011.jpg'},
     { id: 5, categoria: 'giardinaggio', Image: './assets/fotogiardinaggio/imggiard0012.jpg'},
@@ -118,29 +165,82 @@ export class HomeComponent implements AfterViewInit {
     { id: 102, categoria: 'potatura', Image: './assets/fotopotatura/imgpbl070.jpg'},
     { id: 103, categoria: 'potatura', Image: './assets/fotopotatura/imgpbl071.jpg'},
     { id: 104, categoria: 'potatura', Image: './assets/fotopotatura/imgpbl072.jpg'},
+    { id: 105, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot002.jpg'},
+    { id: 106, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot003.jpg'},
+    { id: 107, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot004.jpg'},
+    { id: 108, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot005.jpg'},
+    { id: 109, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot006.jpg'},
+    { id: 110, categoria: 'endoterapia', Image: './assets/fotoendoterapia/imgendot006bis.jpg'},
   ]
 
-  
+  attestatis = [
+    { id: 1, Image: './assets/attestati/attestato1.jpg'},
+    { id: 2, Image: './assets/attestati/attestato2.jpg'},
+    { id: 3, Image: './assets/attestati/attestato3.jpg'},
+    { id: 4, Image: './assets/attestati/attestato4.jpg'},
+    { id: 5, Image: './assets/attestati/attestato5.jpg'},
+    { id: 6, Image: './assets/attestati/attestato6.jpg'},
+  ]
+
   obs: Observable<any> | undefined;
-  
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>(this.listaRes);
-  
-  constructor(private changeDetectorRef: ChangeDetectorRef) {}
+
+  immaginiFiltrate: any[];
+
+  constructor(private changeDetectorRef: ChangeDetectorRef, private http: HttpClient,) {this.immaginiFiltrate = this.listaRes;}
    
   ngAfterViewInit() {
-    this.getCardFoto(0);
-    this.changeDetectorRef.detectChanges();
-    this.dataSource.paginator = this.paginator;
+     this.getCardFoto(0);
+     this.changeDetectorRef.detectChanges();
+     this.dataSource.paginator = this.paginator;
+
+     this.lightGallery.refresh();
+          this.needRefresh = false;
   }
  
-  getCardFoto(valCategoria: any) {
-    if(valCategoria == 0){this.risultatoCat = this.listaRes.sort((a, b) => a.id - b.id);}
-    if(valCategoria == 1){this.risultatoCat = this.listaRes.filter(item => item.categoria === 'giardinaggio').sort((a, b) => a.id - b.id);}
-    if(valCategoria == 2){this.risultatoCat = this.listaRes.filter(item => item.categoria === 'potatura').sort((a, b) => a.id - b.id);}
 
-      this.dataSource = new MatTableDataSource<any>(this.risultatoCat);
-      this.dataSource.paginator = this.paginator;
-       this.obs = this.dataSource.connect();
+  getCardFoto(valCategoria: any) {
+   
+  //  alert(valCategoria);
+    //  if(valCategoria == 0){this.risultatoCat = this.listaRes.sort((a, b) => a.id - b.id);}
+    //  if(valCategoria == 1){this.risultatoCat = this.listaRes.filter(item => item.categoria === 'giardinaggio').sort((a, b) => a.id - b.id);}
+    //  if(valCategoria == 2){this.risultatoCat = this.listaRes.filter(item => item.categoria === 'potatura').sort((a, b) => a.id - b.id);}
+
+      if(valCategoria == 0){this.immaginiFiltrate = this.listaRes.sort((a, b) => a.id - b.id);}
+      if(valCategoria == 1){this.immaginiFiltrate = this.listaRes.filter(immagine => immagine.categoria === 'giardinaggio').sort((a, b) => a.id - b.id);}
+      if(valCategoria == 2){this.immaginiFiltrate = this.listaRes.filter(immagine => immagine.categoria === 'potatura').sort((a, b) => a.id - b.id);}
+      if(valCategoria == 3){this.immaginiFiltrate = this.listaRes.filter(immagine => immagine.categoria === 'endoterapia').sort((a, b) => a.id - b.id);}
+   
+      
+    //  this.immaginiFiltrate = this.listaRes.filter(immagine => immagine.categoria === 'potatura').sort((a, b) => a.id - b.id);
+
+
+    //  if(valCategoria == 0){
+    //   setTimeout(() => {
+    //     this.listaRes = this.listaRes.sort((a, b) => a.id - b.id);
+    //   }, 2000);
+     
+    // }
+    //  if(valCategoria == 1){this.listaRes = this.listaRes.filter(item => item.categoria === 'giardinaggio').sort((a, b) => a.id - b.id);}
+    //  if(valCategoria == 2){this.listaRes = this.listaRes.filter(item => item.categoria === 'potatura').sort((a, b) => a.id - b.id);}
+   
+    
+   
+   // this.listaRes.filter(item => item.categoria === 'potatura').sort((a, b) => a.id - b.id);
+  
+      // this.dataSource = new MatTableDataSource<any>(this.risultatoCat);
+      // this.dataSource.paginator = this.paginator;
+      //  this.obs = this.dataSource.connect();
     }
+
+    // getCardAttestati() {
+    //   this.attestatis = this.attestatis.sort((a, b) => a.id - b.id);
+    // }
+
+    onInit = (detail: InitDetail): void => {
+      this.lightGallery = detail.instance;
+     // this.getCardFoto(0); 
+};
+
     
 }

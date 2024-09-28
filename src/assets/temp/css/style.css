@@ -151,7 +151,7 @@ button.btn-secondary:hover{
 	font-size: 18px;
 }
 .about-main p{
-	font-size: 14px;
+	font-size: 16px;
 	text-transform: capitalize;
 }
 .about-main ul{
@@ -159,7 +159,7 @@ button.btn-secondary:hover{
 }
 .about-main ul li{
 	position: relative;
-	font-weight: 300;
+	font-weight: 500;
 	list-style: none;
 	line-height: 29px;
 }

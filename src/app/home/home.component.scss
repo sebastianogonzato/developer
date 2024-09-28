@@ -1,0 +1,40 @@
+@import url('https://cdn.jsdelivr.net/npm/lightgallery@2.0.0-beta.4/css/lightgallery.css');
+@import url('https://cdn.jsdelivr.net/npm/lightgallery@2.0.0-beta.4/css/lg-zoom.css');
+body {
+  margin: 0;
+}
+.gallery-item {
+  margin: 5px;
+}
+
+div.scroll-container {
+  background-color: #333;
+  overflow: auto;
+  white-space: nowrap;
+ // padding: 4px;
+  width: 100% !important;
+  margin: 0 auto; 
+}
+
+div.scroll-container img {
+  padding: 5px;
+  margin: 0 auto; 
+}
+
+.containervideo {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding-top: 76.25%; /* 16:9 Aspect Ratio */
+}
+
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
