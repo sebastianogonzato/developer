@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, AfterViewInit, VERSION, ViewEncapsulation  } from '@angular/core';
 import { MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
+import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 //nuova galleria
 import lgZoom from 'lightgallery/plugins/zoom';
@@ -8,6 +9,7 @@ import lgVideo from 'lightgallery/plugins/video';
 import { BeforeSlideDetail, InitDetail } from 'lightgallery/lg-events';
 import { LightGallery } from 'lightgallery/lightgallery';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment.development';
 
 
 @Component({
@@ -19,9 +21,14 @@ import { HttpClient } from '@angular/common/http';
 export class HomeComponent implements AfterViewInit {
   name = "Angular " + VERSION.major;
   risultatoCat: any;
+  angFormEmail: FormGroup;
+  endpoint: any;
 
    private lightGallery!: LightGallery;
    private needRefresh = false;
+
+
+
  
   
   ngAfterViewChecked(): void { // freccette di scorrimento
@@ -187,7 +194,27 @@ export class HomeComponent implements AfterViewInit {
 
   immaginiFiltrate: any[];
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, private http: HttpClient,) {this.immaginiFiltrate = this.listaRes;}
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef, 
+    private fb: FormBuilder,
+    private http:HttpClient) {
+  
+    this.endpoint = `${environment.apiUrl}`;
+
+    this.angFormEmail = this.fb.group({
+      nominativo: new FormControl('', [Validators.required]),
+      telefono: new FormControl(''),
+      email: ['',
+      Validators.compose([
+        Validators.required,
+        Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$')]
+      )],
+      messaggio: new FormControl('', [Validators.required]),
+      });
+  
+  
+    this.immaginiFiltrate = this.listaRes;
+  }
    
   ngAfterViewInit() {
      this.getCardFoto(0);
@@ -241,6 +268,34 @@ export class HomeComponent implements AfterViewInit {
       this.lightGallery = detail.instance;
      // this.getCardFoto(0); 
 };
+
+
+invioEmail(angFormEmail: any) {
+ 
+  //  const params = {
+  //  ask: 'inviaEmailResetPsw',
+  //  nome: angFormEmail.value.emailrec,
+  // //  cognome: 'this.passwordCode'
+  // //  messaggio: 'xx'
+  // }
+   this.http.get(this.endpoint+'?nome='+angFormEmail.value.nome).subscribe(res => {
+     console.log(res);
+     if(res){
+      alert('ok');
+      // Swal.fire({
+      //   title: 'Profilo aggiornato',
+      //   text: 'Il tuo profilo è stato aggiornato.',
+      //   icon: 'success',
+      //   showCancelButton: false,
+      //   confirmButtonText: 'OK',
+      //   //cancelButtonText: 'No, non eliminare'
+      // })
+    } else {
+    // this.NotifyResetPasswordNoValid();
+    }
+   });
+   
+}
 
     
 }

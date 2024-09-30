@@ -12,11 +12,13 @@ import { LightgalleryModule } from 'lightgallery/angular';
 
 
 import { CommonModule } from '@angular/common';
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    TestComponent
   ],
   imports: [
     BrowserModule,
