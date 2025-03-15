@@ -47,7 +47,7 @@ try {
 
      //Recipients
      $mail->setFrom('sebaloba71@gmail.com', 'Richiesta dal sito GIARDINIDELCIELO');
-     $mail->addAddress('4kh56@indigobook.com');  
+     $mail->addAddress('info@giardinidelcielo.it');  
      $mail->isHTML(true);                                 
      $mail->Subject = 'Rchiesta dal sito GIARDINIDELCIELO';
      $mail->CharSet = "UTF-8";
