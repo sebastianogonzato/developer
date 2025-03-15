@@ -19,12 +19,12 @@ $request = json_decode($postdata);
 
 //$ask = trim($request->ask);
 
+$nominativo = $_GET['nominativo'];
+$telefono = $_GET['telefono'];
+$email = $_GET['email'];
+$messaggio = $_GET['messaggio'];
+
 $mail = new PHPMailer(true);
-
-
-$nome = $_GET['nome'];
-
-
 try {
      //Server settings
     // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
@@ -46,26 +46,30 @@ try {
       );
 
      //Recipients
-     $mail->setFrom('sebaloba71@gmail.com', 'Sei stato aggiunto sul sito SEGNALAZIONI');
-     $mail->addAddress('tt0xt@rustyload.com');  
+     $mail->setFrom('sebaloba71@gmail.com', 'Richiesta dal sito GIARDINIDELCIELO');
+     $mail->addAddress('4kh56@indigobook.com');  
      $mail->isHTML(true);                                 
-     $mail->Subject = 'Benvenuto sul sito GIARDINIDELCIELO';
+     $mail->Subject = 'Rchiesta dal sito GIARDINIDELCIELO';
      $mail->CharSet = "UTF-8";
      $mail->Body    = '
      <div style="margin: 0 auto;"> 
       <div class="es-m-p0l es-m-txt-c" align="center" style="padding:0;Margin:0;padding-left:15px;font-size:0px"><img src="#" alt width="200" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"></div>
       <h3 style="text-align: center; margin-bottom: 40px; font-size: 20px; color: ##3c8dbc">Benvenuto su GIARDINIDELCIELO</h3>
 
-      <span style="text-align: left;">Clicca sul link sottostante per attivare la tua registrazione, e inserisci la tua password:</span>
-
+      <span style="text-align: left;">Dati utente per una richiesta</span>
       <br><br>
-      <span style="text-align: center; font-size: 16px"><b>Tua password: </b> '.$nome.' </span>
-      
+      <span style="text-align: center; font-size: 16px"><b>Nominativo: </b> '.$nominativo.' </span>
+      <br>
+      <span style="text-align: center; font-size: 16px"><b>Telefono: </b> '.$telefono.' </span>
+       <br>
+      <span style="text-align: center; font-size: 16px"><b>Email: </b> '.$email.' </span>
+       <br>
+      <span style="text-align: center; font-size: 16px"><b>Messaggio: </b> '.$messaggio.' </span>
       </div>
          ';
          $mail->send();
-       echo json_encode('Verifica code inviato correttamente.');
-       
+       //echo json_encode('Verifica code inviato correttamente.');
+          echo"Messaggio inviato correttamente";
          } catch (Exception $e) {
              echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
          }

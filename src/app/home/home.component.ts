@@ -10,7 +10,7 @@ import { BeforeSlideDetail, InitDetail } from 'lightgallery/lg-events';
 import { LightGallery } from 'lightgallery/lightgallery';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
-
+import { ShinystatService } from '../shinystat.service';
 
 @Component({
   selector: 'app-home',
@@ -28,7 +28,9 @@ export class HomeComponent implements AfterViewInit {
    private needRefresh = false;
 
 
-
+   ngOnInit(): void {
+    this.shinystatService.loadScript();
+  }
  
   
   ngAfterViewChecked(): void { // freccette di scorrimento
@@ -197,7 +199,9 @@ export class HomeComponent implements AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef, 
     private fb: FormBuilder,
-    private http:HttpClient) {
+    private http:HttpClient,
+    private shinystatService: ShinystatService
+  ) {
   
     this.endpoint = `${environment.apiUrl}`;
 
@@ -271,30 +275,10 @@ export class HomeComponent implements AfterViewInit {
 
 
 invioEmail(angFormEmail: any) {
- 
-  //  const params = {
-  //  ask: 'inviaEmailResetPsw',
-  //  nome: angFormEmail.value.emailrec,
-  // //  cognome: 'this.passwordCode'
-  // //  messaggio: 'xx'
-  // }
-   this.http.get(this.endpoint+'?nome='+angFormEmail.value.nome).subscribe(res => {
-     console.log(res);
-     if(res){
-      alert('ok');
-      // Swal.fire({
-      //   title: 'Profilo aggiornato',
-      //   text: 'Il tuo profilo è stato aggiornato.',
-      //   icon: 'success',
-      //   showCancelButton: false,
-      //   confirmButtonText: 'OK',
-      //   //cancelButtonText: 'No, non eliminare'
-      // })
-    } else {
-    // this.NotifyResetPasswordNoValid();
-    }
-   });
-   
+   this.http.get(this.endpoint+'?nominativo='+angFormEmail.value.nominativo
+    +'&telefono='+angFormEmail.value.telefono
+    +'&email='+angFormEmail.value.email
+    +'&messaggio='+angFormEmail.value.messaggio).subscribe();
 }
 
     
